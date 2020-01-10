@@ -1,12 +1,12 @@
-terraform-alicloud-eip-instance
+terraform-alicloud-eip
 =====================================================================
 
 
-本 Module 用于在阿里云的 VPC 下创建一个[EIP实例（EIP Instance）](https://www.alibabacloud.com/help/zh/doc-detail/113775.html?spm=a2c5t.11065259.1996646101.searchclickresult.182a7228Vt6Lcw)并支持和ECS，NAT，SLB，NetworkInterface等实例绑定。
+本 Module 用于在阿里云创建一个[EIP实例](https://www.alibabacloud.com/help/zh/doc-detail/113775.html)并支持和 [ECS Instance](https://www.terraform.io/docs/providers/alicloud/r/instance.html)，[SLB](https://www.terraform.io/docs/providers/alicloud/r/slb.html)，[Nat Gateway](https://www.terraform.io/docs/providers/alicloud/r/nat_gateway.html) 和 [Network Interface](https://www.terraform.io/docs/providers/alicloud/r/network_interface.html) 等实例绑定。
 
 本 Module 支持创建以下资源:
 
-* [EIP实例（EIP Instance）](https://www.terraform.io/docs/providers/alicloud/r/eip.html)
+* [EIP实例](https://www.terraform.io/docs/providers/alicloud/r/eip.html)
 
 ## Terraform 版本
 
@@ -14,35 +14,104 @@ terraform-alicloud-eip-instance
 
 ## 用法
 
-```hcl
-module "ecs-eip" {
-  source                       = "terraform-alicloud-modules/eip/alicloud"
-  create                       = "true"
-  number_of_eips               = 1
-  name                         = "ecs-eip"
-  description                  = "An EIP associated with ECS instance."
-  bandwidth                    = 5
-  internet_charge_type         = "PayByTraffic"
-  instance_charge_type         = "PostPaid"
-  period                       = 1
-  isp                          = ""
-  resource_group_id            = "eip-12345678"
-  tags                         = ""
+#### 批量创建 EIP
 
-  number_of_computed_instances = 3
-  computed_instances = [
-     {
-       instance_ids  = ["i-fgh32hgh12h","i-sdh3jhrh"]
-       instance_type = "EcsInstance"
-       private_ips   = []
-     }
-   ]
+```hcl
+module "eip" {
+  source = "terraform-alicloud-modules/eip/alicloud"
+  region = "cn-hangzhou"
+
+  create               = true
+  number_of_eips       = 5
+  name                 = "my-eip"
+  description          = "An EIP associated with ECS instance."
+  bandwidth            = 5
+  internet_charge_type = "PayByTraffic"
+  instance_charge_type = "PostPaid"
+  period               = 1
+  isp                  = ""
+  resource_group_id    = "eip-12345678"
+  tags                 = ""
+}
+```
+
+#### 批量创建 EIP 并将它们与多台实例绑定
+
+**注意:** 指定了实例的时候，不需要再设置 `number_of_eips`，EIP的最终数量由实例个数决定。
+
+```hcl
+module "eip" {
+  source = "terraform-alicloud-modules/eip/alicloud"
+  region = "cn-hangzhou"
+
+  create               = true
+  name                 = "ecs-eip"
+  description          = "An EIP associated with ECS instance."
+  bandwidth            = 5
+  internet_charge_type = "PayByTraffic"
+  instance_charge_type = "PostPaid"
+  period               = 1
+  isp                  = ""
+  resource_group_id    = "eip-12345678"
+  tags                 = ""
+
+  // Associate with ecs and slb
   instances = [
     {
-      instance_ids = ["i-g2q7r8g32h","i-bcuie3h3oi43hio4","i-bceier3"]
+      instance_ids  = ["i-g2q7r8g32h", "i-bcuie3h3oixxxx", "i-bceier3"]
       instance_type = "EcsInstance"
-      private_ips = ["172.16.0.1", "172.16.0.1", "172.16.0.1"]
-   }
+      private_ips   = ["172.16.0.1", "172.16.0.2", "172.16.0.3"]
+    },
+    {
+      instance_ids  = ["slb-45678", "slb-gg8uer3"]
+      instance_type = "SlbInstance"
+      private_ips   = []
+    }
+  ]
+}
+```
+
+#### 批量创建 EIP 并将它们与多台新创建的实例绑定
+
+**注意:** 指定了实例的时候，不需要再设置 `number_of_eips`，EIP的最终数量由实例个数决定。
+
+```hcl
+// Create several ECS instances
+module "ecs" {
+  source  = "alibaba/ecs-instance/alicloud"
+  version = "~> 2.0"
+  region  = "cn-hangzhou"
+
+  number_of_instances = 3
+  name                = "my-ecs-cluster"
+  use_num_suffix      = true
+  
+  # omitted...
+}
+
+module "eip" {
+  source = "terraform-alicloud-modules/eip/alicloud"
+  region = "cn-hangzhou"
+
+  create               = true
+  name                 = "ecs-eip"
+  description          = "An EIP associated with ECS instance."
+  bandwidth            = 5
+  internet_charge_type = "PayByTraffic"
+  instance_charge_type = "PostPaid"
+  period               = 1
+  isp                  = ""
+  resource_group_id    = "eip-12345678"
+  tags                 = ""
+
+  # The number of instances created by other modules
+  number_of_computed_instances = 2
+  computed_instances = [
+    {
+      instance_ids  = module.ecs.this_instance_id
+      instance_type = "EcsInstance"
+      private_ips   = []
+    }
   ]
 }
 ```
@@ -51,19 +120,18 @@ module "ecs-eip" {
 
 本 Module 提供了丰富多样的模板用于创建EIP与其他资源实例进行绑定，以满足不同的使用场景，如：
 
-* [EIP-ECS EIP绑定多台ECS实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/modules/associate-with-ecs)
-* [EIP-NAT EIP绑定NAT实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/modules/associate-with-nat)
-* [EIP-NetworkInterface EIP绑定NetworkInterface实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/modules/associate-with-network-interface)
-* [EIP-SLB EIP绑定SLB实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/modules/associate-with-slb)
-
-
+* [EIP绑定多台ECS实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/modules/associate-with-ecs)
+* [EIP绑定NAT实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/modules/associate-with-nat-gateway)
+* [EIP绑定NetworkInterface实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/modules/associate-with-network-interface)
+* [EIP绑定SLB实例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/modules/associate-with-slb)
 
 ## 示例
 
-* [EIP-ECS EIP与多台ECS实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/examples/associate-with-ecs)
-* [EIP-NAT EIP与NAT实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/examples/associate-with-nat)
-* [EIP-NetworkInterface EIP与NetworkInterface实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/examples/associate-with-network_interface)
-* [EIP-SLB EIP与SLB实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/eip/examples/associate-with-slb)
+* [EIP与多台ECS实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/examples/associate-with-ecs)
+* [EIP与NAT实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/examples/associate-with-nat-gateway)
+* [EIP与NetworkInterface实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/examples/associate-with-network-interface)
+* [EIP与SLB实例绑定示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/tree/master/examples/associate-with-slb)
+
 
 ## 注意事项
 
