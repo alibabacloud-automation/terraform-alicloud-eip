@@ -1,6 +1,12 @@
 ####################################################
 # Data sources to get image, VPC and vswitch details
 ####################################################
+variable "region" {
+  default = "cn-beijing"
+}
+provider "alicloud" {
+  region = var.region
+}
 
 data "alicloud_images" "ubuntu" {
   most_recent = true
@@ -22,11 +28,12 @@ data "alicloud_vswitches" "default" {
 }
 
 ####################################################################
-# eip_ecs_security_group which is used as an argument in ecs_cluster
+# web_server_sg which is used as an argument in ecs_cluster
 ####################################################################
 
 module "web_server_sg" {
   source = "alibaba/security-group/alicloud//modules/http-80"
+  region = var.region
 
   name                = "web-server"
   description         = "Security group for web-server with HTTP ports open within VPC"
@@ -41,6 +48,7 @@ module "web_server_sg" {
 module "ecs_cluster" {
   source  = "alibaba/ecs-instance/alicloud"
   version = "~> 2.0"
+  region  = var.region
 
   number_of_instances         = 2
   name                        = "my-ecs-cluster"
@@ -64,16 +72,20 @@ module "ecs_cluster" {
 
 module "associate-with-ecs" {
   source = "../../modules/associate-with-ecs"
+  region = var.region
 
   create               = true
-  number_of_eips       = 3
   name                 = "eip-ecs-example"
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
   period               = 1
+  tags = {
+    Env      = "Private"
+    Location = "foo"
+  }
 
-  # The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored.
+  # The number of instances created by other modules. If this parameter is used, `number_of_eips` will be ignored.
   number_of_computed_instances = 2
   computed_instances = [
     {
@@ -83,8 +95,11 @@ module "associate-with-ecs" {
     }
   ]
 
-  # ECS instances found by these conditions. If these parameter is used, `number_of_eips` will be ignored.
-  name_regex        = "emr*"
-  tags              = ""
-  resource_group_id = ""
+  # ECS instances can be found automactically by name_regex, instance_tags and instance_resource_group_id. If these parameter is used, `number_of_eips` will be ignored.
+  name_regex = "product*"
+  instance_tags = {
+    Create = "tf"
+    Env    = "prod"
+  }
+  instance_resource_group_id = "rs-132452"
 }
