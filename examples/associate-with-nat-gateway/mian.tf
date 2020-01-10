@@ -1,3 +1,11 @@
+variable "region" {
+  default = "cn-beijing"
+}
+
+provider "alicloud" {
+  region = var.region
+}
+
 #################################
 # Data sources to get VPC details
 #################################
@@ -15,16 +23,16 @@ resource "alicloud_nat_gateway" "default" {
   vpc_id = data.alicloud_vpcs.default.ids.0
 }
 
-########################################################
+########################################################################
 # eip full parameters associated with associate-with-nat-gateway-gateway
-########################################################
+########################################################################
 
 
 module "associate-with-nat" {
   source = "../../modules/associate-with-nat-gateway"
+  region = var.region
 
   create               = true
-  number_of_eips       = 3
   name                 = "eip-nat-example"
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
@@ -42,5 +50,5 @@ module "associate-with-nat" {
   ]
 
   # ECS instances found by this conditions. If these parameter is used, `number_of_eips` will be ignored.
-  name_regex = ""
+  name_regex = "product*"
 }

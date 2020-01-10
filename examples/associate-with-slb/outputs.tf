@@ -7,7 +7,7 @@ output "this_eip_id" {
 }
 
 output "this_eip_name" {
-  description = "The name of the EIP instance."
+  description = "The name of the EIP."
   value       = module.associate-with-slb.this_eip_name
 }
 
@@ -17,7 +17,7 @@ output "this_eip_bandwidth" {
 }
 
 output "this_eip_isp" {
-  description = "The line type of the Elastic IP instance."
+  description = "The line type of the Elastic IP."
   value       = module.associate-with-slb.this_eip_isp
 }
 

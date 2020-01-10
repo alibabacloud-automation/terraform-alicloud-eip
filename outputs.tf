@@ -7,12 +7,12 @@ output "this_eip_id" {
 }
 
 output "this_eip_name" {
-  description = "The name of the EIP instance."
+  description = "The name of the EIP."
   value       = alicloud_eip.this.*.name
 }
 
 output "this_eip_description" {
-  description = "Description of the EIP instance."
+  description = "Description of the EIP."
   value       = alicloud_eip.this.*.description
 }
 
@@ -32,7 +32,7 @@ output "this_eip_bandwidth" {
 }
 
 output "this_eip_isp" {
-  description = "The line type of the Elastic IP instance."
+  description = "The line type of the Elastic IP."
   value       = alicloud_eip.this.*.isp
 }
 
