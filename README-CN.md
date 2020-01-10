@@ -29,9 +29,11 @@ module "eip" {
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
   period               = 1
-  isp                  = ""
   resource_group_id    = "eip-12345678"
-  tags                 = ""
+  tags = {
+    Env      = "Private"
+    Location = "foo"
+  }
 }
 ```
 
@@ -51,9 +53,11 @@ module "eip" {
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
   period               = 1
-  isp                  = ""
   resource_group_id    = "eip-12345678"
-  tags                 = ""
+  tags = {
+    Env      = "Private"
+    Location = "foo"
+  }
 
   // Associate with ecs and slb
   instances = [
@@ -100,9 +104,11 @@ module "eip" {
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
   period               = 1
-  isp                  = ""
   resource_group_id    = "eip-12345678"
-  tags                 = ""
+  tags = {
+    Env      = "Private"
+    Location = "foo"
+  }
 
   # The number of instances created by other modules
   number_of_computed_instances = 2

@@ -87,7 +87,7 @@ module "associate-with-ecs" {
     Location = "foo"
   }
 
-  # The number of instances created by other modules. If this parameter is used, `number_of_eips` will be ignored.
+  # The number of ECS instances created by other modules. If this parameter is used, `number_of_eips` will be ignored.
   number_of_computed_instances = 2
   computed_instances = [
     {
@@ -98,7 +98,7 @@ module "associate-with-ecs" {
   ]
 
   # ECS instances can be found automactically by name_regex, instance_tags and instance_resource_group_id. If these parameter is used, `number_of_eips` will be ignored.
-  name_regex = "product*"
+  name_regex = "foo*"
   instance_tags = {
     Create = "tf"
     Env    = "prod"

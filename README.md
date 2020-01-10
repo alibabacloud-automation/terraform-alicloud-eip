@@ -1,4 +1,4 @@
-Terraform module which creates EIP instances and associate them with other resources on Alibaba Cloud    
+Terraform module which creates EIPs and associate them with other resources on Alibaba Cloud    
 terraform-alicloud-eip
 =====================================================================
 

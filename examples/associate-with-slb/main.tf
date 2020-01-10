@@ -52,7 +52,7 @@ module "associate-with-slb" {
     Location = "foo"
   }
 
-  # The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored.
+  # The number of SLB instances created by its resource. If this parameter is used, `number_of_eips` will be ignored.
   number_of_computed_instances = 1
   computed_instances = [
     {
@@ -62,8 +62,8 @@ module "associate-with-slb" {
     }
   ]
 
-  # ECS instances found by these conditions. If these parameter is used, `number_of_eips` will be ignored.
-  name_regex = "product*"
+  # SLB instances can be found automactically by name_regex, instance_tags and instance_resource_group_id. If these parameter is used, `number_of_eips` will be ignored.
+  name_regex = "bar*"
   instance_tags = {
     Create = "tf"
     Env    = "prod"
