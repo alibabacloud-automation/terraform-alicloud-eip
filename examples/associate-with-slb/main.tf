@@ -1,3 +1,11 @@
+variable "region" {
+  default = "cn-beijing"
+}
+
+provider "alicloud" {
+  region = var.region
+}
+
 data "alicloud_zones" "default" {
   available_resource_creation = "VSwitch"
 }
@@ -31,14 +39,18 @@ resource "alicloud_slb" "default" {
 
 module "associate-with-slb" {
   source = "../../modules/associate-with-slb"
+  region = var.region
 
   create               = true
-  number_of_eips       = 3
   name                 = "eip-slb-example"
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
   period               = 1
+  tags = {
+    Env      = "Private"
+    Location = "foo"
+  }
 
   # The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored.
   number_of_computed_instances = 1
@@ -51,7 +63,10 @@ module "associate-with-slb" {
   ]
 
   # ECS instances found by these conditions. If these parameter is used, `number_of_eips` will be ignored.
-  name_regex        = ""
-  tags              = {}
-  resource_group_id = ""
+  name_regex = "product*"
+  instance_tags = {
+    Create = "tf"
+    Env    = "prod"
+  }
+  instance_resource_group_id = "rs-132452"
 }

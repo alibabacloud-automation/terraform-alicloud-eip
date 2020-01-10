@@ -1,12 +1,14 @@
-####################################################
-# Data sources to get image, VPC and vswitch details
-####################################################
 variable "region" {
   default = "cn-beijing"
 }
+
 provider "alicloud" {
   region = var.region
 }
+
+####################################################
+# Data sources to get image, VPC and vswitch details
+####################################################
 
 data "alicloud_images" "ubuntu" {
   most_recent = true
