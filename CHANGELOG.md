@@ -1,8 +1,9 @@
-## 1.1.0 (Unreleased)
+## 1.2.0 (Unreleased)
+## 1.1.0 (February 23, 2020)
 
 IMPROVEMENTS:
 
-- remove provider version setting [GH-5](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/5)
+- remove provider version setting [GH-6](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/6)
 
 ## 1.0.0 (January 10, 2020)
 
