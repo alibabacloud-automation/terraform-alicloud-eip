@@ -3,6 +3,7 @@
 
 IMPROVEMENTS:
 
+- improve readme [GH-7](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/7)
 - remove provider version setting [GH-6](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/6)
 
 ## 1.0.0 (January 10, 2020)

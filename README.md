@@ -138,6 +138,12 @@ This Module provides a variety of templates for creating EIP instances and assoc
 * This module using AccessKey and SecretKey are from `profile` and `shared_credentials_file`.
 If you have not set them yet, please install [aliyun-cli](https://github.com/aliyun/aliyun-cli#installation) and configure it.
 
+Submit Issues
+-------------
+If you have any problems when using this module, please opening a [provider issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new) and let us know.
+
+**Note:** There does not recommend to open an issue on this repo.
+
 Authors
 -------
 Created and maintained by Zhou qilin(z17810666992@163.com), He Guimin(@xiaozhu36, heguimin36@163.com)
