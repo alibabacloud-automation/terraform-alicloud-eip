@@ -1,5 +1,4 @@
 provider "alicloud" {
-  version                 = ">=1.64.0"
   profile                 = var.profile != "" ? var.profile : null
   shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
   region                  = var.region != "" ? var.region : null
@@ -9,7 +8,12 @@ provider "alicloud" {
 
 
 module "eip-slb" {
-  source               = "../../"
+  source                  = "../../"
+  profile                 = var.profile != "" ? var.profile : null
+  shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
+  region                  = var.region != "" ? var.region : null
+  skip_region_validation  = var.skip_region_validation
+
   create               = var.create
   number_of_eips       = var.number_of_eips
   name                 = var.name
