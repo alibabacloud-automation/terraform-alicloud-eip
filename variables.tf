@@ -84,7 +84,7 @@ variable "tags" {
 variable "isp" {
   description = "The line type of the Elastic IP instance."
   type        = string
-  default     = ""
+  default     = "BGP"
 }
 
 variable "resource_group_id" {
