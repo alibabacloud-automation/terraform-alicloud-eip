@@ -1,17 +1,13 @@
 module "eip-network-interface" {
-  source                  = "../../"
-  profile                 = var.profile != "" ? var.profile : null
-  shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
-  region                  = var.region != "" ? var.region : null
-  skip_region_validation  = var.skip_region_validation
+  source = "../../"
 
   create               = var.create
   number_of_eips       = var.number_of_eips
   name                 = var.name
-  description          = "An EIP associated with NetworkInterface instance."
+  description          = var.description
   bandwidth            = var.bandwidth
   internet_charge_type = var.internet_charge_type
-  instance_charge_type = var.instance_charge_type
+  payment_type         = var.payment_type != "" ? var.payment_type : var.instance_charge_type == "PostPaid" ? "PayAsYouGo" : "Subscription"
   period               = var.period
   isp                  = var.isp
   resource_group_id    = var.resource_group_id
