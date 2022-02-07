@@ -27,11 +27,11 @@ locals {
 resource "alicloud_eip" "this" {
   count = var.create ? local.eip_count : 0
 
-  name                 = local.eip_count > 1 || var.use_num_suffix ? format("%s%03d", var.name, count.index + 1) : var.name
+  address_name         = local.eip_count > 1 || var.use_num_suffix ? format("%s%03d", var.name, count.index + 1) : var.name
   description          = var.description
   bandwidth            = var.bandwidth
   internet_charge_type = var.internet_charge_type
-  instance_charge_type = var.instance_charge_type
+  payment_type         = var.payment_type != "" ? var.payment_type : var.instance_charge_type == "PostPaid" ? "PayAsYouGo" : "Subscription"
   period               = var.period
   isp                  = var.isp
   resource_group_id    = var.resource_group_id
@@ -55,11 +55,11 @@ resource "alicloud_eip_association" "this" {
 resource "alicloud_eip" "with_computed" {
   count = var.create ? var.number_of_computed_instances : 0
 
-  name                 = var.number_of_computed_instances > 1 || var.use_num_suffix ? format("%s%03d", var.name, count.index + 1) : var.name
+  address_name         = var.number_of_computed_instances > 1 || var.use_num_suffix ? format("%s%03d", var.name, count.index + 1) : var.name
   description          = var.description
   bandwidth            = var.bandwidth
   internet_charge_type = var.internet_charge_type
-  instance_charge_type = var.instance_charge_type
+  payment_type         = var.payment_type != "" ? var.payment_type : var.instance_charge_type == "PostPaid" ? "PayAsYouGo" : "Subscription"
   period               = var.period
   isp                  = var.isp
   resource_group_id    = var.resource_group_id
@@ -70,6 +70,7 @@ resource "alicloud_eip" "with_computed" {
     var.tags,
   )
 }
+
 resource "alicloud_eip_association" "with_computed" {
   count = var.create ? var.number_of_computed_instances : 0
 

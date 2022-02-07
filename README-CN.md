@@ -10,7 +10,7 @@ terraform-alicloud-eip
 
 ## Terraform 版本
 
-如果您正在使用 Terraform 0.12.
+如果您正在使用 Terraform 0.13.
 
 ## 用法
 
@@ -136,7 +136,7 @@ module "eip" {
 
 
 ## 注意事项
-本Module从版本v1.2.0开始已经移除掉如下的 provider 的显示设置：
+本Module从版本v1.2.0开始已经移除掉如下的 provider 的显式设置：
 
 ```hcl
 provider "alicloud" {
@@ -166,7 +166,7 @@ module "eip" {
 }
 ```
 
-如果你想对正在使用中的Module升级到 1.2.0 或者更高的版本，那么你可以在模板中显示定义一个系统过Region的provider：
+如果你想对正在使用中的Module升级到 1.2.0 或者更高的版本，那么你可以在模板中显式定义一个相同Region的provider：
 ```hcl
 provider "alicloud" {
   region  = "cn-hangzhou"
@@ -182,7 +182,7 @@ module "eip" {
   // ...
 }
 ```
-或者，如果你是多Region部署，你可以利用 `alias` 定义多个 provider，并在Module中显示指定这个provider：
+或者，如果你是多Region部署，你可以利用 `alias` 定义多个 provider，并在Module中显式指定这个provider：
 
 ```hcl
 provider "alicloud" {
@@ -210,6 +210,13 @@ module "eip" {
 
 更多provider的使用细节，请移步[How to use provider in the module](https://www.terraform.io/docs/language/modules/develop/providers.html#passing-providers-explicitly)
 
+## Terraform 版本
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
+| <a name="requirement_alicloud"></a> [alicloud](#requirement\_alicloud) | >= 1.56.0 |
+
 提交问题
 -------
 如果在使用该 Terraform Module 的过程中有任何问题，可以直接创建一个 [Provider Issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new)，我们将根据问题描述提供解决方案。
@@ -229,5 +236,3 @@ Apache 2 Licensed. See LICENSE for full details.
 * [Terraform-Provider-Alicloud Github](https://github.com/terraform-providers/terraform-provider-alicloud)
 * [Terraform-Provider-Alicloud Release](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * [Terraform-Provider-Alicloud Docs](https://www.terraform.io/docs/providers/alicloud/index.html)
-
-
