@@ -5,28 +5,41 @@ variable "region" {
 provider "alicloud" {
   region = var.region
 }
-
-####################################################
-# Data sources to get image, VPC and vswitch details
-####################################################
+resource "random_uuid" "default" {
+}
+locals {
+  name = substr("tf-example-${replace(random_uuid.default.result, "-", "")}", 0, 16)
+}
 
 data "alicloud_images" "ubuntu" {
   most_recent = true
   name_regex  = "^ubuntu_18.*64"
 }
 
-data "alicloud_vpcs" "default" {
-  is_default = true
+############################################
+# Resource to create VPC, vswitch
+############################################
+
+data "alicloud_zones" "default" {
+  available_resource_creation = "Instance"
+}
+
+resource "alicloud_vpc" "default" {
+  vpc_name   = local.name
+  cidr_block = "10.4.0.0/16"
+}
+
+resource "alicloud_vswitch" "default" {
+  vswitch_name = local.name
+  cidr_block   = "10.4.0.0/24"
+  vpc_id       = alicloud_vpc.default.id
+  zone_id      = data.alicloud_zones.default.zones.0.id
 }
 
 data "alicloud_instance_types" "default" {
   cpu_core_count    = 1
   memory_size       = 2
-  availability_zone = data.alicloud_vswitches.default.vswitches.0.zone_id
-}
-
-data "alicloud_vswitches" "default" {
-  ids = [data.alicloud_vpcs.default.vpcs.0.vswitch_ids.0]
+  availability_zone = data.alicloud_zones.default.zones.0.id
 }
 
 ####################################################################
@@ -37,9 +50,9 @@ module "web_server_sg" {
   source = "alibaba/security-group/alicloud//modules/http-80"
   region = var.region
 
-  name                = "web-server"
+  name                = local.name
   description         = "Security group for web-server with HTTP ports open within VPC"
-  vpc_id              = data.alicloud_vpcs.default.ids.0
+  vpc_id              = alicloud_vpc.default.id
   ingress_cidr_blocks = ["10.10.0.0/16"]
 }
 
@@ -53,11 +66,11 @@ module "ecs_cluster" {
   region  = var.region
 
   number_of_instances         = 2
-  name                        = "my-ecs-cluster"
+  name                        = local.name
   use_num_suffix              = true
   image_id                    = data.alicloud_images.ubuntu.ids.0
   instance_type               = data.alicloud_instance_types.default.ids.0
-  vswitch_id                  = data.alicloud_vpcs.default.vpcs.0.vswitch_ids.0
+  vswitch_id                  = alicloud_vswitch.default.id
   security_group_ids          = [module.web_server_sg.this_security_group_id]
   associate_public_ip_address = false
   system_disk_category        = "cloud_ssd"
@@ -77,7 +90,7 @@ module "associate-with-ecs" {
   region = var.region
 
   create               = true
-  name                 = "eip-ecs-example"
+  name                 = local.name
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"

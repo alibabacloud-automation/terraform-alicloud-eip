@@ -6,12 +6,30 @@ provider "alicloud" {
   region = var.region
 }
 
-#################################
-# Data sources to get VPC details
-#################################
+resource "random_uuid" "default" {
+}
+locals {
+  name = substr("tf-example-${replace(random_uuid.default.result, "-", "")}", 0, 16)
+}
 
-data "alicloud_vpcs" "default" {
-  is_default = true
+############################################
+# Resource to create VPC, vswitch
+############################################
+
+data "alicloud_zones" "default" {
+  available_resource_creation = "VSwitch"
+}
+
+resource "alicloud_vpc" "default" {
+  vpc_name   = local.name
+  cidr_block = "10.4.0.0/16"
+}
+
+resource "alicloud_vswitch" "default" {
+  vswitch_name = local.name
+  cidr_block   = "10.4.0.0/24"
+  vpc_id       = alicloud_vpc.default.id
+  zone_id      = data.alicloud_zones.default.zones.0.id
 }
 
 #########################################################################
@@ -19,8 +37,11 @@ data "alicloud_vpcs" "default" {
 #########################################################################
 
 resource "alicloud_nat_gateway" "default" {
-  name   = "test-eip-gateway"
-  vpc_id = data.alicloud_vpcs.default.ids.0
+  vpc_id           = alicloud_vpc.default.id
+  nat_gateway_name = local.name
+  payment_type     = "PayAsYouGo"
+  vswitch_id       = alicloud_vswitch.default.id
+  nat_type         = "Enhanced"
 }
 
 ########################################################################
@@ -33,7 +54,7 @@ module "associate-with-nat" {
   region = var.region
 
   create               = true
-  name                 = "eip-nat-example"
+  name                 = local.name
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"

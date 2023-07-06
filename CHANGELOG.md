@@ -1,4 +1,17 @@
-## 1.2.0 (Unreleased)
+## 1.2.1 (July 4, 2023)
+
+IMPROVEMENTS:
+
+- Improves the module example [GH-12](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/12)
+
+## 1.2.0 (September 23, 2021)
+
+IMPROVEMENTS:
+
+- Removes the provider setting and improves the Readme [GH-10](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/10)
+- ISP has to be set a default value BGP seemed as OpenAPI default [GH-9](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/9)
+- Modified author contact information [GH-8](https://github.com/terraform-alicloud-modules/terraform-alicloud-eip/pull/8)
+
 ## 1.1.0 (February 23, 2020)
 
 IMPROVEMENTS:
