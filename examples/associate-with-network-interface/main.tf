@@ -6,35 +6,40 @@ provider "alicloud" {
   region = var.region
 }
 
-data "alicloud_zones" "default" {
-  available_resource_creation = "VSwitch"
+resource "random_uuid" "default" {
+}
+
+locals {
+  name = substr("tf-example-${replace(random_uuid.default.result, "-", "")}", 0, 16)
 }
 
 ############################################################################################################
 # Resource to create VPC, vswitch, security_group which is used as an argument in alicloud_network_interface
 ############################################################################################################
+data "alicloud_zones" "default" {
+  available_resource_creation = "VSwitch"
+}
 
 resource "alicloud_vpc" "default" {
-  name       = "vpc-eip-example"
-  cidr_block = "172.16.0.0/12"
+  vpc_name   = local.name
+  cidr_block = "10.4.0.0/16"
 }
 
 resource "alicloud_vswitch" "default" {
-  vpc_id            = alicloud_vpc.default.id
-  cidr_block        = "172.16.0.0/21"
-  availability_zone = data.alicloud_zones.default.zones.0.id
-  name              = "vswitch-eip-example"
+  vswitch_name = local.name
+  cidr_block   = "10.4.0.0/24"
+  vpc_id       = alicloud_vpc.default.id
+  zone_id      = data.alicloud_zones.default.zones.0.id
 }
 
 resource "alicloud_security_group" "default" {
-  count  = "1"
   vpc_id = alicloud_vpc.default.id
-  name   = "test-network_interface-eip"
+  name   = local.name
 }
 
 resource "alicloud_network_interface" "default" {
-  security_groups = [alicloud_security_group.default[0].id]
-  vswitch_id      = alicloud_vswitch.default.id
+  security_group_ids = [alicloud_security_group.default.id]
+  vswitch_id         = alicloud_vswitch.default.id
 }
 
 ######################################################################
@@ -46,7 +51,7 @@ module "associate-with-network-interface" {
   region = var.region
 
   create               = true
-  name                 = "eip-NetworkInterface-example"
+  name                 = local.name
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
   instance_charge_type = "PostPaid"
