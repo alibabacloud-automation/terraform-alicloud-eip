@@ -18,20 +18,20 @@ module "eip-slb" {
     var.tags,
   )
 
-  number_of_computed_instances = var.number_of_computed_instances
+  # number_of_computed_instances = var.number_of_computed_instances
   instances                    = local.instances
-  computed_instances           = var.computed_instances
+  # computed_instances           = var.computed_instances
 }
 
 locals {
   instance_type = "SlbInstance"
-  instances = var.name_regex != "" || length(var.instance_tags) > 0 || var.instance_resource_group_id != "" ? [
+  instances = var.name_regex != "" || length(var.instance_tags) > 0 || var.instance_resource_group_id != "" ? concat([
     {
       instance_ids  = data.alicloud_slbs.this.ids
       instance_type = local.instance_type
       private_ips   = []
     }
-  ] : []
+  ], var.computed_instances) : []
 }
 
 data "alicloud_slbs" "this" {

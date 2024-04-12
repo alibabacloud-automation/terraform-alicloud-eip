@@ -25,8 +25,9 @@ resource "alicloud_nat_gateway" "default" {
 }
 
 resource "alicloud_ecs_network_interface" "default" {
-  security_group_ids = [module.security_group.this_security_group_id]
-  vswitch_id         = module.vpc.this_vswitch_ids[1]
+  security_group_ids   = [module.security_group.this_security_group_id]
+  vswitch_id           = module.vpc.this_vswitch_ids[1]
+  private_ip_addresses = [cidrhost(module.vpc.this_vswitch_cidr_blocks[1], 100)]
 }
 
 resource "alicloud_slb_load_balancer" "default" {
@@ -78,24 +79,28 @@ module "example" {
   tags                 = var.tags
 
   #alicloud_eip_association
-  number_of_computed_instances = 1
-
   instances = [
     {
-      instance_ids  = [alicloud_nat_gateway.default.0.id]
-      instance_type = "Nat"
-      private_ips   = ["172.16.0.1"]
-    }
-  ]
-
-  computed_instances = [
+      instance_ids  = module.ecs_instance.this_instance_id
+      instance_type = "EcsInstance"
+      private_ips   = []
+    },
     {
-      instance_ids  = [alicloud_nat_gateway.default.1.id]
+      instance_ids  = alicloud_nat_gateway.default.*.id
       instance_type = "Nat"
-      private_ips   = ["172.16.0.2"]
+      private_ips   = []
+    },
+    {
+      instance_ids  = [alicloud_ecs_network_interface.default.id]
+      instance_type = "NetworkInterface"
+      private_ips   = [tolist(alicloud_ecs_network_interface.default.private_ip_addresses).0]
+    },
+    {
+      instance_ids  = [alicloud_slb_load_balancer.default.id]
+      instance_type = "SlbInstance"
+      private_ips   = []
     }
   ]
-
 }
 
 //ecs
@@ -117,16 +122,6 @@ module "associate-with-ecs" {
   tags                 = var.tags
 
   #alicloud_eip_association
-  number_of_computed_instances = 1
-
-  computed_instances = [
-    {
-      instance_ids  = module.ecs_instance.this_instance_id
-      instance_type = "EcsInstance"
-      private_ips   = []
-    }
-  ]
-
   #date source alicloud_instances
   name_regex = "foo*"
   instance_tags = {
@@ -156,16 +151,6 @@ module "associate-with-nat" {
   tags                 = var.tags
 
   #alicloud_eip_association
-  number_of_computed_instances = 1
-
-  computed_instances = [
-    {
-      instance_ids  = [alicloud_nat_gateway.default.2.id]
-      instance_type = "Nat"
-      private_ips   = ["172.16.0.6"]
-    }
-  ]
-
   #data source alicloud_nat_gateways
   name_regex = "prod*"
 
@@ -190,16 +175,6 @@ module "associate-with-network-interface" {
   tags                 = var.tags
 
   #alicloud_eip_association
-  number_of_computed_instances = 1
-
-  computed_instances = [
-    {
-      instance_ids  = [alicloud_ecs_network_interface.default.id]
-      instance_type = "NetworkInterface"
-      private_ips   = []
-    }
-  ]
-
   #data source alicloud_network_interfaces
   name_regex = "foo*"
   instance_tags = {
@@ -229,16 +204,6 @@ module "associate-with-slb" {
   tags                 = var.tags
 
   #alicloud_eip_association
-  number_of_computed_instances = 1
-
-  computed_instances = [
-    {
-      instance_ids  = [alicloud_slb_load_balancer.default.id]
-      instance_type = "SlbInstance"
-      private_ips   = ["172.16.0.8"]
-    }
-  ]
-
   #data source alicloud_network_interfaces
   name_regex = "bar*"
   instance_tags = {
