@@ -109,7 +109,7 @@ variable "tags" {
 # EIP Association
 #################
 variable "number_of_computed_instances" {
-  description = "The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored."
+  description = "(Deprecated) The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored."
   type        = number
   default     = 0
 }
@@ -125,7 +125,7 @@ variable "instances" {
 }
 
 variable "computed_instances" {
-  description = "List of ECS, NAT, SLB or NetworkInterface instances created by calling Corresponding ​​resource."
+  description = "(Deprecated)List of ECS, NAT, SLB or NetworkInterface instances created by calling Corresponding ​​resource."
   type = list(object({
     instance_type = string
     instance_ids  = list(string)
