@@ -26,11 +26,6 @@ output "this_eip_isp" {
   value       = module.associate-with-ecs.this_eip_isp
 }
 
-output "this_eip_status" {
-  description = "The EIP current status."
-  value       = module.associate-with-ecs.this_eip_status
-}
-
 output "this_eip_address" {
   description = "The elastic ip address."
   value       = module.associate-with-ecs.this_eip_address

@@ -36,12 +36,6 @@ output "this_eip_isp" {
   value       = module.example.this_eip_isp
 }
 
-
-output "this_eip_status" {
-  description = "The EIP current status."
-  value       = module.example.this_eip_status
-}
-
 output "this_eip_address" {
   description = "The elastic ip address."
   value       = module.example.this_eip_address
