@@ -1,11 +1,3 @@
-variable "region" {
-  default = "cn-beijing"
-}
-
-provider "alicloud" {
-  region = var.region
-}
-
 resource "random_uuid" "default" {
 }
 locals {
@@ -51,7 +43,6 @@ resource "alicloud_nat_gateway" "default" {
 
 module "associate-with-nat" {
   source = "../../modules/associate-with-nat-gateway"
-  region = var.region
 
   create               = true
   name                 = local.name

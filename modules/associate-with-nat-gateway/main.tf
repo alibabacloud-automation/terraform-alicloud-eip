@@ -18,20 +18,20 @@ module "eip-nat" {
     var.tags,
   )
 
-  number_of_computed_instances = var.number_of_computed_instances
+  # number_of_computed_instances = var.number_of_computed_instances
   instances                    = local.instances
-  computed_instances           = var.computed_instances
+  # computed_instances           = var.computed_instances
 }
 
 locals {
   instance_type = "Nat"
-  instances = var.name_regex != "" ? [
+  instances = var.name_regex != "" ? concat([
     {
       instance_ids  = data.alicloud_nat_gateways.this.ids
       instance_type = local.instance_type
       private_ips   = []
     }
-  ] : []
+  ], var.computed_instances) : []
 }
 
 data "alicloud_nat_gateways" "this" {
