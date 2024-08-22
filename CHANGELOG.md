@@ -1,3 +1,8 @@
+## 2.1.0 (Unreleased)
+## 2.0.0 (August 22, 2024)
+
+- module/alicloud_eip,alicloud_eip_association: re-construct the create of resources; [GH-13](https://github.com/alibabacloud-automation/terraform-alicloud-eip/pull/13)
+
 ## 1.2.1 (July 4, 2023)
 
 IMPROVEMENTS:
