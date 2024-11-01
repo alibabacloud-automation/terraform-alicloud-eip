@@ -1,4 +1,8 @@
-## 2.1.0 (Unreleased)
+## 2.2.0 (Unreleased)
+## 2.1.0 (November 01, 2024)
+
+- module/alicloud_eip: support new attributes, remove unused attributes [GH-14](https://github.com/alibabacloud-automation/terraform-alicloud-eip/pull/14)
+
 ## 2.0.0 (August 22, 2024)
 
 - module/alicloud_eip,alicloud_eip_association: re-construct the create of resources; [GH-13](https://github.com/alibabacloud-automation/terraform-alicloud-eip/pull/13)
