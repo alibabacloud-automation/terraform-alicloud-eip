@@ -1,7 +1,3 @@
-variable "region" {
-  default = "cn-beijing"
-}
-
 provider "alicloud" {
   region = var.region
 }
@@ -33,13 +29,13 @@ resource "alicloud_vswitch" "default" {
   vswitch_name = local.name
   cidr_block   = "10.4.0.0/24"
   vpc_id       = alicloud_vpc.default.id
-  zone_id      = data.alicloud_zones.default.zones.0.id
+  zone_id      = data.alicloud_zones.default.zones[0].id
 }
 
 data "alicloud_instance_types" "default" {
   cpu_core_count    = 1
   memory_size       = 2
-  availability_zone = data.alicloud_zones.default.zones.0.id
+  availability_zone = data.alicloud_zones.default.zones[0].id
 }
 
 ####################################################################
@@ -47,7 +43,9 @@ data "alicloud_instance_types" "default" {
 ####################################################################
 
 module "web_server_sg" {
-  source = "alibaba/security-group/alicloud//modules/http-80"
+  source  = "alibaba/security-group/alicloud//modules/http-80"
+  version = "~>2.4.0"
+
   region = var.region
 
   name                = local.name
@@ -68,8 +66,8 @@ module "ecs_cluster" {
   number_of_instances         = 2
   name                        = local.name
   use_num_suffix              = true
-  image_id                    = data.alicloud_images.ubuntu.ids.0
-  instance_type               = data.alicloud_instance_types.default.ids.0
+  image_id                    = data.alicloud_images.ubuntu.ids[0]
+  instance_type               = data.alicloud_instance_types.default.ids[0]
   vswitch_id                  = alicloud_vswitch.default.id
   security_group_ids          = [module.web_server_sg.this_security_group_id]
   associate_public_ip_address = false
@@ -87,9 +85,7 @@ module "ecs_cluster" {
 
 module "associate-with-ecs" {
   source = "../../modules/associate-with-ecs"
-  region = var.region
 
-  create               = true
   name                 = local.name
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
@@ -101,7 +97,6 @@ module "associate-with-ecs" {
   }
 
   # The number of ECS instances created by other modules. If this parameter is used, `number_of_eips` will be ignored.
-  number_of_computed_instances = 2
   computed_instances = [
     {
       instance_ids  = module.ecs_cluster.this_instance_id

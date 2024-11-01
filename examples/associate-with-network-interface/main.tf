@@ -1,7 +1,3 @@
-variable "region" {
-  default = "cn-beijing"
-}
-
 provider "alicloud" {
   region = var.region
 }
@@ -29,7 +25,7 @@ resource "alicloud_vswitch" "default" {
   vswitch_name = local.name
   cidr_block   = "10.4.0.0/24"
   vpc_id       = alicloud_vpc.default.id
-  zone_id      = data.alicloud_zones.default.zones.0.id
+  zone_id      = data.alicloud_zones.default.zones[0].id
 }
 
 resource "alicloud_security_group" "default" {
@@ -48,9 +44,7 @@ resource "alicloud_network_interface" "default" {
 
 module "associate-with-network-interface" {
   source = "../../modules/associate-with-network-interface"
-  region = var.region
 
-  create               = true
   name                 = local.name
   bandwidth            = 5
   internet_charge_type = "PayByTraffic"
@@ -62,7 +56,6 @@ module "associate-with-network-interface" {
   }
 
   # The number of network interface created its resource. If this parameter is used, `number_of_eips` will be ignored.
-  number_of_computed_instances = 1
   computed_instances = [
     {
       instance_ids  = [alicloud_network_interface.default.id]
