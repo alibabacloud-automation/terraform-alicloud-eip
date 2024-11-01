@@ -3,7 +3,7 @@
 #################
 
 variable "number_of_eips" {
-  description = "The number of eip to be created. This parameter will be ignored if `number_of_computed_instances` and `instances` is used."
+  description = "The number of eip to be created."
   type        = number
   default     = 1
 }
@@ -62,12 +62,72 @@ variable "resource_group_id" {
   default     = ""
 }
 
+variable "netmode" {
+  description = "The network type. By default, this value is set to `public`, which specifies the public network type."
+  type        = string
+  default     = null
+}
+
+variable "allocation_id" {
+  description = "The ID of the EIP instance."
+  type        = string
+  default     = null
+}
+
+variable "high_definition_monitor_log_status" {
+  description = "The status of fine-grained monitoring."
+  type        = string
+  default     = null
+}
+
+variable "ip_address" {
+  description = "The IP address of the EIP. Supports a maximum of 50 EIPs."
+  type        = string
+  default     = null
+}
+
+variable "log_project" {
+  description = "The name of the Simple Log Service (SLS) project."
+  type        = string
+  default     = null
+}
+
+variable "log_store" {
+  description = "The name of the Logstore."
+  type        = string
+  default     = null
+}
+
+variable "public_ip_address_pool_id" {
+  description = "The ID of the IP address pool."
+  type        = string
+  default     = null
+}
+
+variable "security_protection_types" {
+  description = "Security protection level."
+  type        = list(string)
+  default     = []
+}
+
+variable "zone" {
+  description = "The zone of the EIP."
+  type        = string
+  default     = null
+}
+
 variable "tags" {
   description = "A mapping of tags to assign to the EIP instance resource."
   type        = map(string)
   default     = {}
 }
 
+
+variable "instance_charge_type" {
+  description = "(Deprecated from version 1.3.0) Elastic IP instance charge type. Use payment_type instead."
+  type        = string
+  default     = "PostPaid"
+}
 #################
 # EIP Association
 #################

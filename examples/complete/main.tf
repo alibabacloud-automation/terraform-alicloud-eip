@@ -6,7 +6,7 @@ data "alicloud_images" "default" {
 }
 
 data "alicloud_instance_types" "default" {
-  availability_zone = data.alicloud_zones.default.zones.0.id
+  availability_zone = data.alicloud_zones.default.zones[0].id
 }
 
 data "alicloud_resource_manager_resource_groups" "default" {
@@ -37,25 +37,30 @@ resource "alicloud_slb_load_balancer" "default" {
 }
 
 module "vpc" {
-  source             = "alibaba/vpc/alicloud"
+  source  = "alibaba/vpc/alicloud"
+  version = "~>1.11.0"
+
   create             = true
   vpc_cidr           = "172.16.0.0/12"
   vswitch_cidrs      = [cidrsubnet("172.16.0.0/12", 8, 8), cidrsubnet("172.16.0.0/12", 8, 10), cidrsubnet("172.16.0.0/12", 8, 12), cidrsubnet("172.16.0.0/12", 8, 16)]
-  availability_zones = [data.alicloud_zones.default.zones.0.id]
+  availability_zones = [data.alicloud_zones.default.zones[0].id]
 }
 
 module "security_group" {
-  source = "alibaba/security-group/alicloud"
+  source  = "alibaba/security-group/alicloud"
+  version = "~>2.4.0"
+
   vpc_id = module.vpc.this_vpc_id
 }
 
 module "ecs_instance" {
-  source = "alibaba/ecs-instance/alicloud"
+  source  = "alibaba/ecs-instance/alicloud"
+  version = "~>2.12.0"
 
   number_of_instances = 1
 
-  instance_type      = data.alicloud_instance_types.default.instance_types.0.id
-  image_id           = data.alicloud_images.default.images.0.id
+  instance_type      = data.alicloud_instance_types.default.instance_types[0].id
+  image_id           = data.alicloud_images.default.images[0].id
   vswitch_ids        = [module.vpc.this_vswitch_ids[3]]
   security_group_ids = [module.security_group.this_security_group_id]
 }
@@ -64,7 +69,6 @@ module "example" {
   source = "../.."
 
   #alicloud_eip
-  create         = true
   number_of_eips = 1
   use_num_suffix = true
 
@@ -75,7 +79,7 @@ module "example" {
   payment_type         = "PayAsYouGo"
   period               = var.period
   isp                  = "BGP"
-  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids.0
+  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids[0]
   tags                 = var.tags
 
   #alicloud_eip_association
@@ -86,14 +90,14 @@ module "example" {
       private_ips   = []
     },
     {
-      instance_ids  = alicloud_nat_gateway.default.*.id
+      instance_ids  = alicloud_nat_gateway.default[*].id
       instance_type = "Nat"
       private_ips   = []
     },
     {
       instance_ids  = [alicloud_ecs_network_interface.default.id]
       instance_type = "NetworkInterface"
-      private_ips   = [tolist(alicloud_ecs_network_interface.default.private_ip_addresses).0]
+      private_ips   = [tolist(alicloud_ecs_network_interface.default.private_ip_addresses)[0]]
     },
     {
       instance_ids  = [alicloud_slb_load_balancer.default.id]
@@ -103,12 +107,11 @@ module "example" {
   ]
 }
 
-//ecs
+#ecs
 module "associate-with-ecs" {
   source = "../../modules/associate-with-ecs"
 
   #alicloud_eip
-  create         = true
   number_of_eips = 1
 
   name                 = var.name
@@ -118,7 +121,7 @@ module "associate-with-ecs" {
   payment_type         = "PayAsYouGo"
   period               = var.period
   isp                  = "BGP"
-  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids.0
+  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids[0]
   tags                 = var.tags
 
   #alicloud_eip_association
@@ -128,16 +131,15 @@ module "associate-with-ecs" {
     Create = "tf"
     Env    = "prod"
   }
-  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids.0
+  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids[0]
 
 }
 
-//nat-gateway
+#nat-gateway
 module "associate-with-nat" {
   source = "../../modules/associate-with-nat-gateway"
 
   #alicloud_eip
-  create         = true
   number_of_eips = 1
 
   name                 = var.name
@@ -147,7 +149,7 @@ module "associate-with-nat" {
   payment_type         = "PayAsYouGo"
   period               = var.period
   isp                  = "BGP"
-  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids.0
+  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids[0]
   tags                 = var.tags
 
   #alicloud_eip_association
@@ -156,12 +158,11 @@ module "associate-with-nat" {
 
 }
 
-//network-interface
+#network-interface
 module "associate-with-network-interface" {
   source = "../../modules/associate-with-network-interface"
 
   #alicloud_eip
-  create         = true
   number_of_eips = 1
 
   name                 = var.name
@@ -171,7 +172,7 @@ module "associate-with-network-interface" {
   payment_type         = "PayAsYouGo"
   period               = var.period
   isp                  = "BGP"
-  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids.0
+  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids[0]
   tags                 = var.tags
 
   #alicloud_eip_association
@@ -181,16 +182,15 @@ module "associate-with-network-interface" {
     Create = "tf"
     Env    = "prod"
   }
-  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids.0
+  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids[0]
 
 }
 
-//slb
+#slb
 module "associate-with-slb" {
   source = "../../modules/associate-with-slb"
 
   #alicloud_eip
-  create         = true
   number_of_eips = 1
 
   name                 = var.name
@@ -200,7 +200,7 @@ module "associate-with-slb" {
   payment_type         = "PayAsYouGo"
   period               = var.period
   isp                  = "BGP"
-  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids.0
+  resource_group_id    = data.alicloud_resource_manager_resource_groups.default.ids[0]
   tags                 = var.tags
 
   #alicloud_eip_association
@@ -210,6 +210,6 @@ module "associate-with-slb" {
     Create = "tf"
     Env    = "prod"
   }
-  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids.0
+  instance_resource_group_id = data.alicloud_resource_manager_resource_groups.default.ids[0]
 
 }

@@ -20,7 +20,6 @@ terraform-alicloud-eip
 module "eip" {
   source = "terraform-alicloud-modules/eip/alicloud"
 
-  create               = true
   number_of_eips       = 5
   name                 = "my-eip"
   description          = "An EIP associated with ECS instance."
@@ -44,7 +43,6 @@ module "eip" {
 module "eip" {
   source = "terraform-alicloud-modules/eip/alicloud"
 
-  create               = true
   name                 = "ecs-eip"
   description          = "An EIP associated with ECS instance."
   bandwidth            = 5
@@ -93,7 +91,6 @@ module "ecs" {
 module "eip" {
   source = "terraform-alicloud-modules/eip/alicloud"
 
-  create               = true
   name                 = "ecs-eip"
   description          = "An EIP associated with ECS instance."
   bandwidth            = 5
@@ -107,8 +104,7 @@ module "eip" {
   }
 
   # The number of instances created by other modules
-  number_of_computed_instances = 2
-  computed_instances = [
+  instances = [
     {
       instance_ids  = module.ecs.this_instance_id
       instance_type = "EcsInstance"

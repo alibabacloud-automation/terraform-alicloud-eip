@@ -1,42 +1,9 @@
-#################
-# Provider
-#################
-variable "region" {
-  description = "(Deprecated from version 1.2.0) The region used to launch this module resources."
-  type        = string
-  default     = "cn-shanghai"
-}
 
-variable "profile" {
-  description = "(Deprecated from version 1.2.0) The profile name as set in the shared credentials file. If not set, it will be sourced from the ALICLOUD_PROFILE environment variable."
-  type        = string
-  default     = ""
-}
-variable "shared_credentials_file" {
-  description = "(Deprecated from version 1.2.0) This is the path to the shared credentials file. If this is not set and a profile is specified, $HOME/.aliyun/config.json will be used."
-  type        = string
-  default     = ""
-}
-
-variable "skip_region_validation" {
-  description = "(Deprecated from version 1.2.0) Skip static validation of region ID. Used by users of alternative AlibabaCloud-like APIs or users w/ access to regions that are not public (yet)."
-  type        = bool
-  default     = false
-}
 
 variable "instance_charge_type" {
   description = "(Deprecated from version 1.3.0) Elastic IP instance charge type. Use payment_type instead."
   type        = string
   default     = "PostPaid"
-}
-
-#################
-# EIP
-#################
-variable "create" {
-  description = "Whether to create an EIP instance and whether to associate EIP with other resources."
-  type        = bool
-  default     = true
 }
 
 variable "number_of_eips" {
@@ -87,12 +54,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "status" {
-  description = "The EIP current status."
-  type        = string
-  default     = ""
-}
-
 variable "isp" {
   description = "The line type of the Elastic IP instance."
   type        = string
@@ -101,12 +62,6 @@ variable "isp" {
 
 variable "resource_group_id" {
   description = "The Id of resource group which the eip belongs."
-  type        = string
-  default     = ""
-}
-
-variable "ip_address" {
-  description = "The elastic ip address."
   type        = string
   default     = ""
 }
@@ -129,19 +84,6 @@ variable "name_regex" {
   default     = ""
 }
 
-#################
-# EIP Association
-#################
-variable "instances" {
-  description = "A list of instances found by the condition. If this parameter is used, `number_of_eips` will be ignored."
-  type = list(object({
-    instance_type = string
-    instance_ids  = list(string)
-    private_ips   = list(string)
-  }))
-  default = []
-}
-
 variable "computed_instances" {
   description = "List of ECS instances created by calling alicloud_instance."
   type = list(object({
@@ -152,8 +94,3 @@ variable "computed_instances" {
   default = []
 }
 
-variable "number_of_computed_instances" {
-  description = "The number of instances created by calling the API. If this parameter is used, `number_of_eips` will be ignored."
-  type        = number
-  default     = 0
-}

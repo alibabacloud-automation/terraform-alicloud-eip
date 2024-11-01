@@ -1,7 +1,6 @@
 module "eip-ecs" {
   source = "../../"
 
-  create               = var.create
   number_of_eips       = var.number_of_eips
   name                 = var.name
   description          = var.description
@@ -19,7 +18,7 @@ module "eip-ecs" {
   )
 
   # number_of_computed_instances = var.number_of_computed_instances
-  instances                    = local.instances
+  instances = local.instances
   # computed_instances           = var.computed_instances
 }
 
@@ -31,7 +30,7 @@ locals {
       instance_type = local.instance_type
       private_ips   = []
     }
-  ], var.computed_instances) : []
+  ], var.computed_instances) : null
 }
 
 data "alicloud_instances" "this" {
