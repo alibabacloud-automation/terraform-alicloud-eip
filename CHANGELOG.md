@@ -1,4 +1,8 @@
 ## 2.2.0 (Unreleased)
+## 2.1.1 (March 14, 2025)
+
+- examples/complete: improve the examples [GH-15](https://github.com/alibabacloud-automation/terraform-alicloud-eip/pull/15)
+
 ## 2.1.0 (November 01, 2024)
 
 - module/alicloud_eip: support new attributes, remove unused attributes [GH-14](https://github.com/alibabacloud-automation/terraform-alicloud-eip/pull/14)
