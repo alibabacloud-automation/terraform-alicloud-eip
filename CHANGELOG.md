@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v2.1.1...v2.1.2) (2025-10-27)
+
+
+### Bug Fixes
+
+* improve the example ([74e8edd](https://github.com/alibabacloud-automation/terraform-alicloud-eip/commit/74e8edd367b03d84a97ea8518512e41d9507f569))
+
 ## 2.2.0 (Unreleased)
 ## 2.1.1 (March 14, 2025)
 
