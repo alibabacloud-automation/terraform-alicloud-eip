@@ -8,8 +8,9 @@ locals {
 }
 
 data "alicloud_images" "ubuntu" {
-  most_recent = true
-  name_regex  = "^ubuntu_18.*64"
+  most_recent   = true
+  owners        = "system"
+  instance_type = data.alicloud_instance_types.default.instance_types[0].id
 }
 
 ############################################
@@ -33,9 +34,10 @@ resource "alicloud_vswitch" "default" {
 }
 
 data "alicloud_instance_types" "default" {
-  cpu_core_count    = 1
-  memory_size       = 2
-  availability_zone = data.alicloud_zones.default.zones[0].id
+  instance_type_family = "ecs.g9i"
+  cpu_core_count       = 2
+  memory_size          = 8
+  availability_zone    = data.alicloud_zones.default.zones[0].id
 }
 
 ####################################################################
@@ -71,7 +73,7 @@ module "ecs_cluster" {
   vswitch_id                  = alicloud_vswitch.default.id
   security_group_ids          = [module.web_server_sg.this_security_group_id]
   associate_public_ip_address = false
-  system_disk_category        = "cloud_ssd"
+  system_disk_category        = "cloud_essd"
   system_disk_size            = 50
   tags = {
     Created     = "Terraform"
