@@ -1,15 +1,20 @@
+provider "alicloud" {
+  region = "ap-southeast-5"
+}
+
 data "alicloud_zones" "default" {
 }
 
 data "alicloud_images" "default" {
-  name_regex = "ubuntu_18"
+  instance_type = data.alicloud_instance_types.default.instance_types[0].id
+  owners        = "system"
 }
 
 data "alicloud_instance_types" "default" {
   availability_zone    = data.alicloud_zones.default.zones[0].id
   cpu_core_count       = 2
   memory_size          = 8
-  instance_type_family = "ecs.g6"
+  instance_type_family = "ecs.g9i"
 }
 
 data "alicloud_resource_manager_resource_groups" "default" {
@@ -62,10 +67,12 @@ module "ecs_instance" {
 
   number_of_instances = 1
 
-  instance_type      = data.alicloud_instance_types.default.instance_types[0].id
-  image_id           = data.alicloud_images.default.images[0].id
-  vswitch_ids        = [module.vpc.this_vswitch_ids[3]]
-  security_group_ids = [module.security_group.this_security_group_id]
+  instance_type        = data.alicloud_instance_types.default.instance_types[0].id
+  image_id             = data.alicloud_images.default.images[0].id
+  vswitch_ids          = [module.vpc.this_vswitch_ids[3]]
+  security_group_ids   = [module.security_group.this_security_group_id]
+  system_disk_category = "cloud_essd"
+  disk_category        = "cloud_essd"
 }
 
 module "example" {

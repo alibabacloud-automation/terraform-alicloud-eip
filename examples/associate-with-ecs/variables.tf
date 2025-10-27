@@ -1,5 +1,5 @@
 variable "region" {
-  default     = "cn-beijing"
+  default     = "ap-southeast-5"
   type        = string
   description = "The region of the resources."
 }
