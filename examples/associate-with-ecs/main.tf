@@ -62,8 +62,7 @@ module "web_server_sg" {
 
 module "ecs_cluster" {
   source  = "alibaba/ecs-instance/alicloud"
-  version = "~> 2.0"
-  region  = var.region
+  version = "~> 3.0"
 
   number_of_instances         = 2
   name                        = local.name
