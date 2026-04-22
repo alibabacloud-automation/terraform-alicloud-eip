@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v3.0.0...v3.0.1) (2026-04-22)
+
+
+### Bug Fixes
+
+* update version of the dependency module ([e7e61fa](https://github.com/alibabacloud-automation/terraform-alicloud-eip/commit/e7e61fa33e25d0d8d41d875ca2a69e8b5102f045))
+
 ## [3.0.0](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v2.1.3...v3.0.0) (2026-04-22)
 
 
