@@ -1,3 +1,19 @@
+## [3.0.0](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v2.1.3...v3.0.0) (2026-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* add provider version constraint for aliyun/alicloud
+
+### Features
+
+* add provider version constraint for aliyun/alicloud ([f8a7d75](https://github.com/alibabacloud-automation/terraform-alicloud-eip/commit/f8a7d75f45302c84ea0aba815778541356e90c8e))
+
+
+### Bug Fixes
+
+* improve examples ([ba38cf8](https://github.com/alibabacloud-automation/terraform-alicloud-eip/commit/ba38cf8c27c6ef11388056f056da43aa6cad369b))
+
 ## [2.1.3](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v2.1.2...v2.1.3) (2025-11-27)
 
 ## [2.1.2](https://github.com/alibabacloud-automation/terraform-alicloud-eip/compare/v2.1.1...v2.1.2) (2025-10-27)
