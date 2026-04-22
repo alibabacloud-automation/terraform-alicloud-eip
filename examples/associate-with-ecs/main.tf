@@ -46,7 +46,7 @@ data "alicloud_instance_types" "default" {
 
 module "web_server_sg" {
   source  = "alibaba/security-group/alicloud//modules/http-80"
-  version = "~>2.4.0"
+  version = "3.0.0"
 
   region = var.region
 
@@ -62,7 +62,7 @@ module "web_server_sg" {
 
 module "ecs_cluster" {
   source  = "alibaba/ecs-instance/alicloud"
-  version = "~> 3.0"
+  version = "3.0.0"
 
   number_of_instances         = 2
   name                        = local.name
