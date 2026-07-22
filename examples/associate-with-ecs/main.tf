@@ -48,8 +48,6 @@ module "web_server_sg" {
   source  = "alibaba/security-group/alicloud//modules/http-80"
   version = "3.0.0"
 
-  region = var.region
-
   name                = local.name
   description         = "Security group for web-server with HTTP ports open within VPC"
   vpc_id              = alicloud_vpc.default.id
